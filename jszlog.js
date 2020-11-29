@@ -1182,14 +1182,47 @@ function im(k) {
   return msg;
 }
 
+function im_id(id) {
+	var element = document.getElementById(id);
+	if (element === undefined) { 
+		console.log("Could not find element with id '"+id+"'"); 
+	}
+	else {
+		//Treat buttons (id starts with btn_) differently
+		if (id.substring(0,4) == "btn_") element.value = im(id.toUpperCase());
+		else element.textContent = im(id.toUpperCase());
+	}
+}
+
 /**
  * Internalionalize various parts
  */
 function internalionalize() {
-  var variable_name_th = document.getElementById('variable_name_th');
-  variable_name_th.textContent = im('VARIABLE_NAME_TH');
-  var variable_value_th = document.getElementById('variable_value_th');
-  variable_value_th.textContent = im('VARIABLE_VALUE_TH');
+  //im_id('');
+  im_id('variable_name_th');
+  im_id('variable_value_th');
+  im_id('rule_name_th');
+  im_id('rule_body_th');
+  im_id('internal_content_span');
+  im_id('enter_something_interesting_span');
+  im_id('manual_span');
+  im_id('btn_analyze');
+  im_id('btn_template');
+  im_id('btn_calc');
+  im_id('btn_example1');
+  im_id('btn_example2');
+  im_id('fill_in_examples_span');
+  
+  // var variable_name_th = document.getElementById('variable_name_th');
+  // variable_name_th.textContent = im('VARIABLE_NAME_TH');
+  // var variable_value_th = document.getElementById('variable_value_th');
+  // variable_value_th.textContent = im('VARIABLE_VALUE_TH');
+  // var rule_name_th = document.getElementById('rule_name_th');
+  // rule_name_th.textContent = im('RULE_NAME_TH');
+  // var rule_body_th = document.getElementById('rule_body_th');
+  // rule_body_th.textContent = im('RULE_NAME_TH');
+  
+  
 }
 
 function buttonEmptyTemplate() {

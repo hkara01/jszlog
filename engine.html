@@ -24,11 +24,11 @@
   </head>
   <body onload="initvalues()">
 <h4 align="center">JavaScript Zeroth-order Logic Engine</h4>
-Entrez quelque chose d'intéressant ici (cf. <a href=".">manuel</a>) <br>
+<span id="enter_something_interesting_span">Entrez quelque chose d'intéressant ici (cf. </span><a href="."><span id="manual_span">manuel</span></a>) <br>
 <form name="ruledefs" class="testparse">
 <textarea name="texttoparse" rows="8" cols="80" id="textinput"></textarea>
 <p>
-<input type="button" name="" value="Analyser" onclick="doparse()">
+<input type="button" name="" value="Analyser" onclick="doparse()" id="btn_analyze">
 </form>
 <div class="" id="texterr">
 </div>
@@ -48,7 +48,7 @@ Entrez quelque chose d'intéressant ici (cf. <a href=".">manuel</a>) <br>
 <table class="" border="1">
   <thead>
     <tr>
-      <th colspan="2" style="width: 20%;" title="Nom de la règle">Nom</th><th style="width: 80%;" title="Corps de la règle">Corps</th>
+      <th colspan="2" style="width: 20%;" title="Nom de la règle" id="rule_name_th">Nom</th><th style="width: 80%;" title="Corps de la règle" id="rule_body_th">Corps</th>
     </tr>
   </thead>
   <tbody id="rules"></tbody>
@@ -57,15 +57,15 @@ Entrez quelque chose d'intéressant ici (cf. <a href=".">manuel</a>) <br>
 Messages :
 <pre id="actionsoutput"></pre>
 <hr>
-<span class="" onclick="visibilityTextout()">Contenu interne (cliquer ici pour afficher ou cacher) :</span>
+<span class="" onclick="visibilityTextout()" id="internal_content_span">Contenu interne (cliquer ici pour afficher ou cacher) :</span>
 <pre class="invisible" id="textout">
 </pre>
 <a id="retrolink" href="#"></a>
 <hr>
-Remplissage avec des exemples :
-<button type="button" name="button0" onclick="buttonEmptyTemplate()">Gabarit</button>
-<button type="button" name="button1" onclick="buttonCalculatorTemplate()">Calculateur</button>
-<button type="button" name="button2" onclick="buttonExample1()">Exemple 1</button>
-<button type="button" name="button3" onclick="buttonExample2()">Exemple 2</button>
+<span id="fill_in_examples_span">Remplissage avec des exemples</span> :
+<input type="button" name="button0" onclick="buttonEmptyTemplate()" id="btn_template" value="Gabarit">
+<input type="button" name="button1" onclick="buttonCalculatorTemplate()" id="btn_calc" value="Calculateur">
+<input type="button" name="button2" onclick="buttonExample1()" id="btn_example1" value="Exemple 1">
+<input type="button" name="button3" onclick="buttonExample2()" id="btn_example2" value="Exemple 2">
   </body>
 </html>
