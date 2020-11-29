@@ -1,0 +1,4 @@
+# ignore everything that is below root's "local/" directory
+/local/
+# ignore editor backup files (they end with ~)
+*~
