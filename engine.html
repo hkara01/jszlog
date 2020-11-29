@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>jszlog</title>
+    <style type="text/css" media="screen">
+      .trueElt {
+        background-color: green;
+      }
+      .falseElt {
+        background-color: white;
+      }
+      .invisible {
+        display: none;
+      }
+      .visible {
+
+      }
+    </style>
+    <script src="i18n.js" type="text/javascript" charset="utf-8"></script>
+    <script src="objects.js" type="text/javascript" charset="utf-8"></script>
+    <script src="jszlog.js" type="text/javascript" charset="utf-8"></script>
+    <title>jszlog</title>
+  </head>
+  <body onload="initvalues()">
+<h4 align="center">JavaScript Zeroth-order Logic Engine</h4>
+Entrez quelque chose d'intéressant ici (cf. <a href=".">manuel</a>) <br>
+<form name="ruledefs" class="testparse">
+<textarea name="texttoparse" rows="8" cols="80" id="textinput"></textarea>
+<p>
+<input type="button" name="" value="Analyser" onclick="doparse()">
+</form>
+<div class="" id="texterr">
+</div>
+<hr>
+<form class="" name="dataentry" id="dataentryform" onsubmit="return false;">
+  <table class=""  border="1">
+    <thead>
+      <tr>
+        <th class="falseElt" title="Nom de la variable" id="variable_name_th">Nom</th><th title="Données (saisies ou calculées) de la variable" id="variable_value_th" >Donnée</th>
+      </tr>
+    </thead>
+    <tbody id="dataentry"></tbody>
+  </table>
+
+</form>
+<hr>
+<table class="" border="1">
+  <thead>
+    <tr>
+      <th colspan="2" style="width: 20%;" title="Nom de la règle">Nom</th><th style="width: 80%;" title="Corps de la règle">Corps</th>
+    </tr>
+  </thead>
+  <tbody id="rules"></tbody>
+</table>
+<hr>
+Messages :
+<pre id="actionsoutput"></pre>
+<hr>
+<span class="" onclick="visibilityTextout()">Contenu interne (cliquer ici pour afficher ou cacher) :</span>
+<pre class="invisible" id="textout">
+</pre>
+<a id="retrolink" href="#"></a>
+<hr>
+Remplissage avec des exemples :
+<button type="button" name="button0" onclick="buttonEmptyTemplate()">Gabarit</button>
+<button type="button" name="button1" onclick="buttonCalculatorTemplate()">Calculateur</button>
+<button type="button" name="button2" onclick="buttonExample1()">Exemple 1</button>
+<button type="button" name="button3" onclick="buttonExample2()">Exemple 2</button>
+  </body>
+</html>

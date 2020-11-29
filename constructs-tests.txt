@@ -1,0 +1,590 @@
+
+Some constructs used to test the syntax while I gradually implement and extend the parser.
+
+
+"Boo" <- "Ghost".
+OK
+
+"Boo" <- "Ghost" | "Shell".
+OK
+
+"Boo" <- "Ghost" | "Shell" & X.
+OK
+
+"Boo" <- "Ghost" | "Shell" & X > 3 .
+OK
+
+"Boo" <- "Ghost" | "Shell" & X = 'I10'.
+OK
+
+"Boo" <- "Ghost" | "Shell" & X = 3.1415E2 .
+OK
+
+"Boo" <- "Ghost" | "Shell" & X = 3.1415E-20 .
+OK
+
+"Boo" <- "Ghost" | "Shell" & X = -3.1415E-20 .
+OK
+
+"Boo" <- "Ghost" | "Shell" & (X = -3.1415E-20|Y='J10').
+name:Boo,expr:("Ghost" | ("Shell" & (X = -3.1415e-20 | Y = 'J10')))
+OK
+
+"Boo" <- "Ghost" & "Shell" | (X = -3.1415E-20|Y='J10').
+name:Boo,expr:(("Ghost" & "Shell") | (X = -3.1415e-20 | Y = 'J10'))
+OK
+
+"Boo" <- "Ghost" & "Shell" | (X = -3.1415E-20|Y='J10'&"Matrix").
+name:Boo,expr:(("Ghost" & "Shell") | (X = -3.1415e-20 | (Y = 'J10' & "Matrix")))
+OK
+
+"Boo" <- "Ghost" & "Shell" | ( X = -3.1415E-20 | Y = 'J10' & "Matrix"  )  .
+name:Boo,expr:(("Ghost" & "Shell") | (X = -3.1415e-20 | (Y = 'J10' & "Matrix")))
+OK
+
+
+
+
+2020-11-01 18:05:00 We can parse a full def for the first time, including
+comments :
+-------------------------------------------------------------------------------
+
+#This is nice
+DATA:
+
+foo : BOOL.
+bar: NUM.
+baz: {'x', 'y'}. #baz is not bar
+gruntz: {}.
+
+LOGIC:
+"Hi".
+"There".
+"Boo" <- "Ghost" & "Shell" | ( X = -3.1415E-20 | Y = 'J10' & "Matrix" )  .
+
+ACTIONS:
+"There": WRITE 'Bananas'.
+#another action
+"Boo": WRITE 'No fluff just ## stuff' .
+#seems we're done here
+
+-------------------------------------------------------------------------------
+
+
+2020-11-01 18:40:00 Added default values, checked for ':' right after data
+def name :
+-------------------------------------------------------------------------------
+
+#This is nice
+DATA:
+
+foo: BOOL = FALSE.
+bar: NUM = 42 .
+baz: {'x', 'y'} = 'y'. #baz is not bar
+gruntz: {}.
+
+LOGIC:
+"Hi".
+"There".
+"Boo" <- "Ghost" & "Shell" | ( X = -3.1415E-20 | Y = 'J10' & "Matrix" )  .
+
+ACTIONS:
+"There": WRITE 'Bananas'.
+#another action
+"Boo": WRITE 'No fluff just ## stuff' .
+#seems we're done here
+
+-------------------------------------------------------------------------------
+
+
+DATA:
+  foo: NUM = 42 .
+
+LOGIC:
+  "Boo" <- foo = 42 .
+
+ACTIONS:
+  "Boo": WRITE 'It s 42'.
+
+
+-------------------------------------------------------------------------------
+DATA:
+  foo: NUM = 42 .
+  bar: {'a','b','c'} = 'b'.
+
+LOGIC:
+  "Boo" <- foo = 42 .
+  "Bar a or c" <- bar = 'a' | bar = 'c'.
+
+ACTIONS:
+  "Boo": WRITE 'It s 42'.
+  "Bar a or c": WRITE 'You did not select b...'.
+
+
+Detection of cyclic calls :
+-------------------------------------------------------------------------------
+DATA:
+  foo: NUM = 42 .
+  bar: {'a','b','c'} = 'b'.
+
+LOGIC:
+  "Boo" <- foo = 42 | "Baz".
+  "Bar a or c" <- bar = 'a' | bar = 'c' | "Boo".
+  "Baz" <- bar = 'b' | "Bar a or c".
+
+ACTIONS:
+  "Boo": WRITE 'It s 42'.
+  "Bar a or c": WRITE 'You did not select b...'.
+-------------------------------------------------------------------------------
+
+
+Test of calculated variables :
+-------------------------------------------------------------------------------
+
+DATA:
+  foo: CALC = 1 .
+
+LOGIC:
+  "Boo" <- foo = 1 .
+
+ACTIONS:
+  "Boo": WRITE 'It s 1'.
+
+Test of calculated variables 2 :
+-------------------------------------------------------------------------------
+DATA:
+  foo: CALC = 1 .
+  foo2: CALC = foo+1 .
+  foo3: CALC = foo2+1 .
+
+LOGIC:
+  "Boo" <- foo = 1 .
+
+ACTIONS:
+  "Boo": WRITE 'It s 1'.
+
+Test of calculated variables 3 :
+-------------------------------------------------------------------------------
+DATA:
+  foo: CALC = 1 .
+  foo2: CALC = foo+1 .
+  foo3: CALC = foo2+1 .
+  foo4: NUM = 2 .
+  foo5: CALC = foo4.
+
+LOGIC:
+  "Boo" <- foo = 1 .
+
+ACTIONS:
+  "Boo": WRITE 'It s 1'.
+
+
+Test of calculated variables 4 :
+-------------------------------------------------------------------------------
+DATA:
+  foo: CALC = 1 .
+  foo2: CALC = foo+1 .
+  foo3: CALC = foo2+1 .
+  foo4: NUM = 2 .
+  foo5: CALC = foo4 + 0 .
+  foo6: {'1','2'}.
+  foo7: CALC = foo6.
+
+LOGIC:
+  "Boo" <- foo = 1 .
+
+ACTIONS:
+  "Boo": WRITE 'It s 1'.
+
+Test of negations, compound expressions :
+-------------------------------------------------------------------------------
+DATA:
+  foo: BOOL = TRUE .
+  five: CALC = 5 .
+LOGIC:
+  "Foo is true" <- foo.
+  "Foo is false" <- !foo.
+  "This is true" <- five > 3 .
+  "This is false" <- five < 3 .
+  "Foo comp is true" <- foo = TRUE.
+  "Compound 1" <- "Foo is true" & "This is true" | "Foo is false".
+
+ACTIONS:
+
+Fictious DSS :
+-------------------------------------------------------------------------------
+DATA:
+  hba1c: NUM.
+  dfg: NUM.
+  gravite: {'peu grave','grave','tres grave'}.
+
+LOGIC:
+  "Hba1c elevee" <- hba1c > 8 .
+  "Dfg bas" <- dfg < 60 .
+  "Diabete desequilibre" <- "Hba1c elevee".
+  "Diabete grave" <- "Diabete desequilibre" & "Dfg bas".
+
+ACTIONS:
+  "Diabete grave": WRITE 'Une consultation en néphrologie est à prévoir rapidement'.
+-
+
+
+-------------------------------------------------------------------------------
+# Test of date parsing and handling
+DATA:
+  birthdate: DATE .
+LOGIC:
+ "Millenial" <- birthdate >= 2000-01-01T00:00:00Z .
+ "Not millenial" <- !"Millenial".
+ACTIONS:
+  "Millenial": WRITE 'You are a millenial !' .
+  "Not millenial": WRITE 'You are not a millenial' .
+
+-------------------------------------------------------------------------------
+# Test of date parsing and handling
+DATA:
+  birthdate: DATE .
+LOGIC:
+ "Born in the future" <- birthdate >= NOW .
+ACTIONS:
+  "Born in the future": WRITE 'You are not born yet'.
+
+
+-------------------------------------------------------------------------------
+# Test of '+'
+DATA:
+  y: TEXT.
+  x: CALC = y + 1.
+LOGIC:
+ "Always print".
+ACTIONS:
+  "Always print": WRITE 'x:$x '.
+
+-------------------------------------------------------------------------------
+# Test of conditional evaluation operator '?'
+DATA:
+  a: BOOL.
+  b: BOOL.
+  c: BOOL.
+  d: CALC = "A"?1:2 .
+LOGIC:
+  "A" <- a.
+  "B" <- b.
+  "C" <- c.
+ "Always print".
+ "Test 1" <- a.
+ACTIONS:
+  "Always print": WRITE 'd:$d '.
+
+-------------------------------------------------------------------------------
+# Test of conditional evaluation operator
+DATA:
+  a: BOOL.
+  b: BOOL.
+  c: BOOL.
+  d: CALC = 9+("A"?"B"?"C"?1:2:3:4)+1 .
+LOGIC:
+  "A" <- a.
+  "B" <- b.
+  "C" <- c.
+ "Always print".
+ "Test 1" <- a.
+ACTIONS:
+  "Always print": WRITE 'd:$d '.
+
+
+-------------------------------------------------------------------------------
+# Test of conditional evaluation operator (notice here how 4 is missing,
+# "" will be returned instead)
+DATA:
+  a: BOOL.
+  b: BOOL.
+  c: BOOL.
+  d: CALC = 9+("A"?"B"?"C"?1:2:3)+1 .
+LOGIC:
+  "A" <- a.
+  "B" <- b.
+  "C" <- c.
+ "Always print".
+ "Test 1" <- a.
+ACTIONS:
+  "Always print": WRITE 'd:$d '.
+
+-------------------------------------------------------------------------------
+# Test of SIN function call
+DATA:
+  pi: CALC = 3.141592653589793 .
+  d: CALC = SIN(pi) .
+LOGIC:
+ "Always print".
+ACTIONS:
+  "Always print": WRITE 'd:$d '.
+
+-------------------------------------------------------------------------------
+# Test of CAT function call
+DATA:
+  pi: CALC = 3.141592653589793 .
+  d: CALC = SIN(pi) .
+  e: CALC = CAT('>',d,'<') .
+LOGIC:
+ "Always print".
+ACTIONS:
+  "Always print": WRITE 'd:$d ,e:$e '.
+
+-------------------------------------------------------------------------------
+# Test of LEFT function call
+DATA:
+  pi: CALC = 3.141592653589793 .
+  d: CALC = SIN(pi) .
+  e: CALC = CAT('>',d,'<') .
+  f: CALC = LEFT(e,2).
+LOGIC:
+ "Always print".
+ACTIONS:
+  "Always print": WRITE 'd:$d , e:$e , f:$f '.
+
+-------------------------------------------------------------------------------
+# Test of RIGHT function call
+DATA:
+  pi: CALC = 3.141592653589793 .
+  d: CALC = SIN(pi) .
+  e: CALC = CAT('>',d,'<') .
+  f: CALC = RIGHT(e,2).
+LOGIC:
+ "Always print".
+ACTIONS:
+  "Always print": WRITE 'd:$d , e:$e , f:$f '.
+
+-------------------------------------------------------------------------------
+# Test of SLICE function call
+DATA:
+  pi: CALC = 3.141592653589793 .
+  d: CALC = SIN(pi) .
+  e: CALC = CAT('>',d,'<') .
+  f: CALC = SLICE(e,2,4).
+LOGIC:
+ "Always print".
+ACTIONS:
+  "Always print": WRITE 'd:$d , e:$e , f:$f '.
+
+-------------------------------------------------------------------------------
+# Test of LEN function call
+DATA:
+  pi: CALC = 3.141592653589793 .
+  d: CALC = SIN(pi) .
+  e: CALC = CAT('>',d,'<') .
+  f: CALC = LEN(e).
+LOGIC:
+ "Always print".
+ACTIONS:
+  "Always print": WRITE 'd:$d , e:$e , f:$f '.
+
+-------------------------------------------------------------------------------
+# Test of MIN() function call
+DATA:
+  pi: CALC = 3.141592653589793 .
+  d: CALC = SIN(pi) .
+  e: CALC = CAT('>',d,'<') .
+  f: CALC = MIN().
+LOGIC:
+ "Always print".
+ACTIONS:
+  "Always print": WRITE 'd:$d , e:$e , f:$f '.
+
+-------------------------------------------------------------------------------
+# Test of MIN(LEN(e), -3) function call
+DATA:
+  pi: CALC = 3.141592653589793 .
+  d: CALC = SIN(pi) .
+  e: CALC = CAT('>',d,'<') .
+  f: CALC = MIN(LEN(e), -3).
+LOGIC:
+ "Always print".
+ACTIONS:
+  "Always print": WRITE 'd:$d , e:$e , f:$f '.
+
+-------------------------------------------------------------------------------
+# Test of MOD function call
+DATA:
+  a: CALC = MOD(11, 3).
+LOGIC:
+ "Always print".
+ACTIONS:
+  "Always print": WRITE 'a:$a '.
+
+-------------------------------------------------------------------------------
+# Test of IDIV function call
+DATA:
+  a: CALC = IDIV(10, 3).
+  b: CALC = MOD(10, 3).
+  c: CALC = a * 3 + b. # is 10
+LOGIC:
+ "Always print".
+ACTIONS:
+  "Always print": WRITE 'a:$a , b:$b , c:$c '.
+
+-------------------------------------------------------------------------------
+# Test of IDIV function call
+DATA:
+  a: CALC = IDIV(-10, 3).
+  b: CALC = MOD(-10, 3).
+  c: CALC = a * 3 + b. # is -10
+LOGIC:
+ "Always print".
+ACTIONS:
+  "Always print": WRITE 'a:$a , b:$b , c:$c '.
+
+-------------------------------------------------------------------------------
+# Test of DATE additions
+DATA:
+  a: CALC = NOW.
+  b: CALC = a + 10.5 . # NOW is 2020-11-11T22:56:01.663Z, b is 2020-11-22T10:56:01.663Z
+LOGIC:
+ "Always print".
+ACTIONS:
+  "Always print": WRITE 'a:$a , b:$b , c:$c '.
+
+-------------------------------------------------------------------------------
+#Test calculation of dates and times.
+DATA:
+t: TIME.
+onesec: CALC = 1 / 24 / 60 / 60 . # problem ! Left associativity of '-' not handled !
+t1: CALC = t + onesec .
+t1h: CALC = FLOOR(t1 * 24).
+t1s: CALC = FLOOR((t1 * 24 - t1h)*60).
+LOGIC:
+"Always print".
+ACTIONS:
+"Always print": WRITE 't1:$t1  = $t1h :$t1s '.
+
+
+
+-------------------------------------------------------------------------------
+#Titre.
+DATA:
+x: CALC = 10 - 2 - 2 . # should be 6, in old buggy implementation was 10
+LOGIC:
+ACTIONS:
+
+-------------------------------------------------------------------------------
+#Titre.
+DATA:
+x: CALC = 20 / 2 / 2 . # should be 5, not 20 !
+LOGIC:
+ACTIONS:
+
+-------------------------------------------------------------------------------
+#Test calculation of dates and times.
+DATA:
+t: TIME.
+onesec: CALC = 1 / 24 / 60 / 60 . # problem ! Left associativity of '-' not handled !
+sixtysec: CALC = 60 * onesec.
+tc: CALC = t.
+t1: CALC = t + onesec .
+t1h: CALC = FLOOR(t1 * 24).
+t1m: CALC = FLOOR((t1 * 24 - t1h)*60).
+LOGIC:
+"Always print".
+ACTIONS:
+"Always print": WRITE 't1:$t1  = $t1h :$t1m '.
+
+-------------------------------------------------------------------------------
+#Test calculations with time, without optimizations..
+#Does not print the correct numbers for 22:01 -> 22:07 !
+DATA:
+t: TIME. # control that enables input of time
+t24: CALC = t * 24 . # time in hours and fraction of hours
+th: CALC = FLOOR(t24). # t contains a fraction of a day
+thc: CALC = "Th lt 10" ? '0' : '' . # help with formatting the hours
+tm: CALC = FLOOR((t24 - th) * 60). # tm contains the minutes
+tmc: CALC = "Tm lt 10" ? '0' : '' . # help with formatting the minutes
+LOGIC:
+"Th lt 10" <- th < 10 .
+"Tm lt 10" <- tm < 10 .
+"Always print".
+ACTIONS:
+"Always print": WRITE 't:$t  = $thc $th :$tmc $tm '.
+
+
+-------------------------------------------------------------------------------
+#Test calculations with time, with corrections, and usage of HM function.
+DATA:
+t: TIME. # control that enables input of time
+t24: CALC = t * 24 + 0.1157e-5. # time in hours and fraction of hours + 1 sec
+th: CALC = FLOOR(t24). # t contains a fraction of a day
+thc: CALC = "Th lt 10" ? '0' : '' . # help with formatting the hours
+tm: CALC = FLOOR((t24 - th) * 60). # tm contains the minutes
+tmc: CALC = "Tm lt 10" ? '0' : '' . # help with formatting the minutes
+ft: CALC = HM(t). # Using HM function that does the same
+LOGIC:
+"Th lt 10" <- th < 10 .
+"Tm lt 10" <- tm < 10 .
+"Always print".
+ACTIONS:
+"Always print": WRITE 't:$t  = $thc $th :$tmc $tm ///$ft '.
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------

@@ -1,0 +1,124 @@
+                                    JavaScript Zero+ logic rules
+
+comments :
+
+'#' : all following chars are ignored until end of line is reached.
+
+common definitions :
+
+NUM is a numeric digit [0-9]
+ID is an identifier [A-Za-z][A-Za-z0-9_]+
+TRUE is the text "TRUE" in uppercase
+FALSE is the text "FALSE" in uppercase
+
+factname : '"' char+ '"'
+
+stringliteral : ''' char+ '''
+
+numericliteral : NUM+ ['.'NUM+] ['E'['+'|'-']NUM+]
+
+dateliteral : NUM NUM NUM NUM '-' NUM NUM '-' NUM NUM [ 'T' NUM NUM ':' NUM NUM ':' NUM NUM]
+
+
+Sections :
+
+DATA:
+LOGIC:
+ACTIONS:
+
+In DATA :
+
+ID ':' BOOL [ '=' [ 'TRUE' | 'FALSE' ]] '.'
+
+ID ':' NUM [ '=' numericliteral ] '.'
+
+ID ':' TEXT [ '=' stringliteral ] '.'
+
+ID ':' DATE [ '=' dateliteral | 'NOW' ] '.'
+
+ID ':' codelist [ '=' stringliteral ] '.'
+
+ID ':' CALC '=' calcexpr '.'
+
+codelist : '{' ''' text ''' [','  ''' text '''] '}'
+
+in LOGIC :
+
+rule:
+      factname '.' /* defines this fact as true */
+    | factname '<-' rulebody '.'
+
+rulebody:
+      orexpr
+
+orexpr:
+      andexpr
+    | andexpr '|' orexpr
+
+andexpr:
+      notexpr
+    | notexpr '&' andexpr
+
+notexpr:
+      factname
+    | NOT factname
+    | comparisonexpr
+
+comparisonexpr:
+      '(' orexpr ')'
+    | ID /* if ID is BOOL, it is sufficient */
+    | ID '=' terminalvalue
+    | ID '<' terminalvalue
+    | ID '<=' terminalvalue
+    | ID '>=' terminalvalue
+    | ID '>' terminalvalue
+    | ID '<>' terminalvalue
+    | ID '=' terminalvalue
+    | ID '<>' terminalvalue
+
+terminalvalue:
+      numericliteral
+    | stringliteral
+    | ID
+
+calcexpr:
+      cond_op
+    | ce_add_sub
+
+cond_op:
+      factname '?' calcexpr
+    | factname '?' calcexpr ':' calcexpr
+
+ce_add_sub:
+      ce_mul_div
+    | ce_mul_div '+' ce_add_sub
+    | ce_mul_div '-' ce_add_sub
+
+ce_mul_div:
+      ce_term
+    | ce_term '*' ce_mul_div
+    | ce_term '/' ce_mul_div
+
+ce_term:
+      dateliteral
+    | numericliteral
+    | stringliteral
+    | factname
+    | function_call
+    | ID
+
+function_call:
+    ID '(' param_list ')'
+
+param_list:
+      <nothing>
+    | calcexpr
+    | calcexpr ',' param_list
+    
+In ACTION :
+
+factname ':' WRITE stringliteral /* stringliteral accepts $ID - type templating */
+
+TODO :
+Update this grammar with the new functions added in CALC data.
+
