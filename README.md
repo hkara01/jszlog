@@ -18,3 +18,12 @@ The specifications file has 3 parts : DATA, LOGIC and ACTIONS.
 
 There is a manual at https://hkara01.github.io/jszlog/<br>
 You can test the page at https://www.hkmi2.org/jszlog/engine.html?lang=en<br>
+
+To deploy it locally, copy in the same directory of your webserver the 4 files :
+- engine.html
+- i18n.js
+- jszlog.js
+- objects.js
+and point your browser to engine.html with an extra argument of lang=en to get elements in english (default is to have
+them in french)
+
