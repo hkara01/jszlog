@@ -1,6 +1,6 @@
-//:encoding=utf-8:
+//:encoding=utf-8:                for jEdit
 //Translation of messages in various languages
-//Very crude way of internationalization
+//Very crude way of internationalizing strings but sufficient here
 
 var english_messages = {
   'VARIABLE_VALUE_TH': 'Value',

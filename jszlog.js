@@ -1,6 +1,7 @@
 /* JavaScript Zero-order Logic rules engine */
+// :encoding=UTF-8:                       for jEdit
 
-//TODO : CALC datatype, something like : FOO: CALC "Fact a" * 10 + "Fact b" * 20 + BAR / 2 .
+// Harry KARADIMAS, 2020, 2021
 
 console.log("Entering jszlog.js");
 

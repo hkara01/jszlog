@@ -22,7 +22,7 @@ title: Jszlog
 email: jszlog@hkmi2.org
 description: >- # this means to ignore newlines until "baseurl:"
   Jszlog is a zeroth-order logic engine, written in javascript.
-  It's main purpose is to teach the basic concepts of logic-based, data-driven systems.
+  Its main purpose is to teach the basic concepts of logic-based, data-driven systems.
 baseurl: "/jszlog" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 # twitter_username: jekyllrb

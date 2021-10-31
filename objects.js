@@ -1,4 +1,6 @@
 // Objects used by jszlog.js
+// :encoding=UTF-8:                  for jEdit
+// Harry KARADIMAS, 2020, 2021
 
 console.log("Entering objects.js 1");
 
